@@ -21,7 +21,10 @@ class ToDoViewController: UIViewController {
 
         if let todo = todo {
             if todo.important  {
-                toDoName.text = todo.name + " ‼️"
+                if let name = todo.name {
+                     toDoName.text = name + " ‼️"
+                }
+               
             } else {
                 toDoName.text = todo.name
             }

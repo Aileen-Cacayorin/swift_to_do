@@ -25,11 +25,14 @@ class ToDoNewViewController: UIViewController {
     
     @IBAction func addToDoBtn(_ sender: Any) {
         
-        let important = importantSwitch.isOn
-        if let name = nameTextField.text {
-            let newToDo = ToDo(name: name, important: important)
-            listTableVC?.toDoItems.append(newToDo)
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            let newToDo = ToDo(context: context)
+            newToDo.important = importantSwitch.isOn
+            if let name = nameTextField.text {
+                newToDo.name = name
+            }
+            (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
         }
-        listTableVC?.tableView.reloadData()
+        navigationController?.popViewController(animated: true)
     }
 }

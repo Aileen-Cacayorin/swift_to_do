@@ -9,21 +9,28 @@
 import UIKit
 
 class ListTableViewController: UITableViewController {
-    var toDoItems : [ToDo] = []
+    var toDoItems = [ToDo]()
 
 //    var toDoItems = [ToDo]() --> shorthand
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let item1 = ToDo(name: "Swift Class")
-        let item2 = ToDo(name: "DB Dumpfile", important: false)
-        let item3 = ToDo(name: "Pay Credit Card Bill", important: true)
-  
-        toDoItems = [item1, item2, item3]
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        getToDos()
     }
 
-    // MARK: - Table view data source
+    func getToDos() {
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            if let toDosFromCoreData = try? context.fetch(ToDo.fetchRequest()) {
+                if let tempToDos = toDosFromCoreData as? [ToDo] {
+                    toDoItems = tempToDos
+                    tableView.reloadData()
+                }
+            }
+        }
+    }
 
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -38,7 +45,11 @@ class ListTableViewController: UITableViewController {
         let currentToDo : ToDo = toDoItems[indexPath.row]
         
         if currentToDo.important  {
-            cell.textLabel?.text = currentToDo.name + " ‼️"
+            if let name = currentToDo.name {
+                cell.textLabel?.text = name + " ‼️"
+            }
+            
+            
         } else {
             cell.textLabel?.text = currentToDo.name
         }
